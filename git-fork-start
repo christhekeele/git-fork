@@ -2,13 +2,14 @@
 
 usage() {
   cat <<USAGE
-usage: git fork start <branch_name> [-q|--quiet]
+usage: git fork start <branch_name> [-q]
 
 Arguments:
   <branch_name>   A new branch in which to start a contribution.
 
 Options:
-  -q | --quiet    Suppresses output.
+  -q              Suppresses output.
+
 USAGE
 }
 
@@ -36,10 +37,10 @@ cmd_start(){
 }
 
 parse_opts() {
-  while getopts ":q,quiet" option
+  while getopts ":q" option
   do
     case "$option" in
-      q | quiet)
+      q)
         QUIET=true
         ;;
       *)

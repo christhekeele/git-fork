@@ -2,18 +2,18 @@
 
 usage() {
   cat <<USAGE
-usage: git fork submit [-A|--all | -L|--local | <branch_names>...] [-r <remote>] [-q|--quiet]
+usage: git fork submit [-A | -L | <branch_names>...] [-r <remote>] [-q]
 
 Arguments:
   <branch_names>  List of branches to rebase off of master.
                   Defaults to the current branch if not on master.
 
 Options:
-  -A | -all       Submits all branches.
-  -L | -local     Submits all branches that only exist locally.
+  -A              Submits all branches.
+  -L              Submits all branches that only exist locally.
   -r <remote>     Remote to push to.
                   Defaults to origin.
-  -q | --quiet    Suppresses output.
+  -q              Suppresses output.
 
 USAGE
 }
@@ -94,19 +94,19 @@ cmd_submit(){
 }
 
 parse_opts() {
-  while getopts ":A,all,L,local,r:q,quiet" option
+  while getopts ":ALr:q" option
   do
     case "$option" in
-      A | all)
+      A)
         ALL=true
         ;;
-      L | local)
+      L)
         LOCAL=true
         ;;
       r)
         REMOTE="$OPTARG"
         ;;
-      q | quiet)
+      q)
         QUIET=true
         ;;
       *)

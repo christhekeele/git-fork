@@ -7,7 +7,8 @@ Some talking points:
 
 - One might say we're being a little paranoid with our updates in this trivial scenario, but it's reasonable to assume you'd be wanting to update more than once for any sustained development. `git-fork` is paranoid for you, and makes sustained development a breeze.
 - `git-fork` supports updating and submitting multiple contribution branches in one pass. The equivalent to that in normal git workflow is omitted for the sake of brevity.
-- `git-fork` is smart, and allows you to omit the contribution branch name if you're already on it. The example assumes each time we visit the repo it may not be on the branch we've been working on.
+- `git-fork` is smart, and allows you to omit the contribution branch name if you're already on it. We include it here for the sake of clarity and fairness.
+- `git-fork` also avoids issuing checkouts when not needed.
 
 Normal Git Workflow
 -------------------

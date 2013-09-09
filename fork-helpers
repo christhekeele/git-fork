@@ -40,20 +40,20 @@ commit_count() {
 }
 
 present_behind() {
-  DIFF=$(commit_count $1 $2)
-  if [[ $DIFF = '0' ]]; then
+  local diff=$(commit_count $1 $2)
+  if [[ $diff = '0' ]]; then
     echo "up to date with $2"
   else
-    echo "behind $2 by $DIFF commits"
+    echo "behind $2 by $diff commits"
   fi
 }
 
 present_ahead() {
-  DIFF=$(commit_count $1 $2)
-  if [[ $DIFF = '0' ]]; then
+  local diff=$(commit_count $1 $2)
+  if [[ $diff = '0' ]]; then
     echo "up to date with $1"
   else
-    echo "ahead $1 by $DIFF commits"
+    echo "ahead of $1 by $diff commits"
   fi
 }
 
@@ -79,19 +79,19 @@ get_git_dir_name() {
 }
 
 local_only_branches() {
-  BRANCHES=""
+  local branches=""
   # List local branches by name
-  LOCAL=$(branches_matching refs/heads/)
+  local local_branches=$(branches_matching refs/heads/)
   # List source branches by source/name
-  SOURCE=$(branches_matching refs/remotes/source/)
-  for local in $LOCAL; do
+  local source_branches=$(branches_matching refs/remotes/source/)
+  for local in $local_branches; do
     # If branch is not found in source
-    if [[ -z $(echo $SOURCE | grep -Eo "\bsource\/$local\b") ]]; then
+    if [[ -z $(echo $source_branches | grep -Eo "\bsource\/$local\b") ]]; then
       # add to local only list
-      BRANCHES="$local $BRANCHES"
+      branches="$local $branches"
     fi
   done
-  echo $BRANCHES
+  echo $branches
 }
 
 branch_status() {
@@ -99,15 +99,16 @@ branch_status() {
   if [[ "$1" != 'master' ]]; then
     # Ensure branch exists
     if [[ -n $(branch_exists $1) ]]; then
-      BEHIND_MASTER=$(present_behind $1 master)
-      BEHIND_SOURCE=$(present_behind $1 source/master)
+      local behind_master=$(present_behind $1 master)
+      local behind_source=$(present_behind $1 source/master)
+      local ahead_remote=''
       # Try remote
       if [[ -n "$2" ]] && [[ -n $(branches_matching "refs/remotes/$2/$1") ]]; then
-        AHEAD_REMOTE=$(present_ahead $2/$1 $1)
+        ahead_remote=$(present_ahead $2/$1 $1)
       else
-        AHEAD_REMOTE="submission status unkown"
+        ahead_remote="submission status unkown"
       fi
-      output "$1: $BEHIND_MASTER, $BEHIND_SOURCE, $AHEAD_REMOTE."
+      output "$1: $behind_master, $behind_source, $ahead_remote."
     else
       output "Branch $1 not found. Skipping."
     fi

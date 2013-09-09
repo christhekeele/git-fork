@@ -2,15 +2,15 @@
 
 usage() {
   cat <<USAGE
-usage: git fork status [-A|--all | -L|--local | <branch_names>...] [-r <remote>]
+usage: git fork status [-A | -L | <branch_names>...] [-r <remote>]
 
 Arguments:
   <branch_names>  List of branches to rebase off of master.
                   Defaults to the current branch if not on master.
 
 Options:
-  -A | -all       Submits all branches.
-  -L | -local     Submits all branches that only exist locally.
+  -A              Submits all branches.
+  -L              Submits all branches that only exist locally.
   -r <remote>     Remote to check submission status against.
                   Tries origin if not specified.
 
@@ -93,13 +93,13 @@ cmd_status(){
 }
 
 parse_opts() {
-  while getopts ":A,all,L,local,r:" option
+  while getopts ":ALr:" option
   do
     case "$option" in
-      A | all)
+      A)
         ALL=true
         ;;
-      L | local)
+      L)
         LOCAL=true
         ;;
       r)

@@ -51,19 +51,22 @@ The assumed OSS contribution workflow and the corresponding commands are:
   4.  Ensure master is up to date with source
   5.  Create a branch to develop a contribution (<branchname>)
 
-- git fork update [<branch_names>...] [--all]
+- git fork update [<branch_names>... | -L | -A]
   6.  Periodically update master from source
   7.  Rebase contribution branches off of master
 
 8. Handle merge conflicts during rebase
 
-- git fork submit [<branch_names>...] [-r <remote>]
+- git fork submit [<branch_names>... | -L | -A] [-r <remote>]
   9.  Ensure master is up to date with source
   10.  Rebase contribution branches off of master (<branch_names>)
   11. Push contribution branches to origin or a public remote for approval
 
 As you can see, using git-fork takes care of all steps of the process,
 expect for handling merge conflicts during rebase.
+
+You can check where you are in the workflow at any point by calling
+  git fork status [<branch_names>... | -L | -A]
 
 Existing forks can adopt git-fork simply by adding a remote named <source>.
 

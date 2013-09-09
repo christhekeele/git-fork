@@ -2,16 +2,16 @@
 
 usage() {
   cat <<USAGE
-usage: git fork update [-A|--all | -L|--local | <branch_names>...] [-q|--quiet]
+usage: git fork update [-A | -L | <branch_names>...] [-q]
 
 Arguments:
   <branch_names>  List of branches to rebase off of master.
                   Defaults to the current branch if not on master.
 
 Options:
-  -A | -all       Updates all branches.
-  -L | -local     Updates all branches that only exist locally.
-  -q | --quiet    Suppresses output.
+  -A              Updates all branches.
+  -L              Updates all branches that only exist locally.
+  -q              Suppresses output.
 
 USAGE
 }
@@ -91,16 +91,16 @@ cmd_update(){
 }
 
 parse_opts() {
-  while getopts ":A,all,L,local,q,quiet" option
+  while getopts ":ALq" option
   do
     case "$option" in
-      A | all)
+      A)
         ALL=true
         ;;
-      L | local)
+      L)
         LOCAL=true
         ;;
-      q | quiet)
+      q)
         QUIET=true
         ;;
       *)

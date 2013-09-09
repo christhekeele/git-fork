@@ -2,7 +2,7 @@
 
 usage() {
   cat <<USAGE
-usage: git fork new <source> [<destination>] [-o <origin>] [-q|--quiet]
+usage: git fork new <source> [<destination>] [-o <origin>] [-q]
 
 Arguments:
   <source>        Cloneable URI of the repo you wish to fork.
@@ -11,7 +11,7 @@ Arguments:
 
 Options:
   -o <origin>     URI of a remote to host your fork at.
-  -q | --quiet    Suppresses output.
+  -q              Suppresses output.
 
 USAGE
 }
@@ -69,13 +69,13 @@ cmd_new(){
 }
 
 parse_opts() {
-  while getopts ":o:,q,quiet" option
+  while getopts ":o:q" option
   do
     case "$option" in
       o)
         ORIGIN="$OPTARG"
         ;;
-      q | quiet)
+      q)
         QUIET=true
         ;;
       *)
