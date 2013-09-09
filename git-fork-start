@@ -26,12 +26,12 @@ cmd_help() {
 
 cmd_start(){
   # Required first parameter
-  BRANCH_NAME=$1; shift
+  local branch_name=$1; shift
 
   parse_opts "$@"
 
   execute "git fork update"
-  checkout "-b $BRANCH_NAME"
+  checkout "-b $branch_name"
 
   exit 0
 }

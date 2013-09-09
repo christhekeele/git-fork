@@ -34,7 +34,11 @@ cmd_help() {
 
 cmd_status(){
 
-  INITIAL_BRANCH=$(current_branch)
+  local initial_branch=$(current_branch)
+  local remote=''
+  local branches=''
+  local all_branches=''
+  local local_branches=''
 
   # Assert the existance of a <source> remote with <master> branch, or fail
   if [[ -n "$(branch_exists 'source master')" ]]; then
@@ -42,40 +46,40 @@ cmd_status(){
     # Until parameter doesn't exist or is an option
     until [ -z "$1" ] || [[ $1 = -* ]]; do
       # add it as a branch name
-      BRANCHES="$BRANCHES $1"; shift
+      branches="$branches $1"; shift
     done
 
     # If no branches supplied and current is not master, rebase current.
-    if [[ -z "$BRANCHES" ]] && [[ $INITIAL_BRANCH != 'master' ]]; then
-      BRANCHES="$INITIAL_BRANCH"
+    if [[ -z "$branches" ]] && [[ $initial_branch != 'master' ]]; then
+      branches="$initial_branch"
     fi
 
     parse_opts "$@"
 
     # If no remote specified, try origin
-    if [[ -z "$REMOTE" ]]; then
-      REMOTE='origin'
+    if [[ -z "$remote" ]]; then
+      remote='origin'
     fi
 
-    # If ALL is set
-    if [ -n "$ALL" ]; then
+    # If all_branches is set
+    if [ -n "$all_branches" ]; then
       # get status for all branches
       for branch in $(branches_matching refs/heads/); do
-        branch_status $branch $REMOTE
+        branch_status $branch $remote
       done
 
-    # If LOCAL is set
-    elif [ -n "$LOCAL" ]; then
+    # If local_branches is set
+    elif [ -n "$local_branches" ]; then
       # get status for all branches that only exist locally
       for branch in $(local_only_branches); do
-        branch_status $branch $REMOTE
+        branch_status $branch $remote
       done
 
     # else if branches were provided or you were on one
-    elif [ -n "$BRANCHES" ]; then
+    elif [ -n "$branches" ]; then
       # get status for those branches
-      for branch in $BRANCHES; do
-        branch_status $branch $REMOTE
+      for branch in $branches; do
+        branch_status $branch $remote
       done
     fi
 
@@ -97,13 +101,13 @@ parse_opts() {
   do
     case "$option" in
       A)
-        ALL=true
+        all_branches=true
         ;;
       L)
-        LOCAL=true
+        local_branches=true
         ;;
       r)
-        REMOTE="$OPTARG"
+        remote="$OPTARG"
         ;;
     esac
   done

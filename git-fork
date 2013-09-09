@@ -6,7 +6,7 @@ if [ "$DEBUG" = "yes" ]; then
 fi
 set -e
 
-export GITFORK_VERSION="0.2.3"
+export GITFORK_VERSION="0.3.0"
 
 # The sed expression here replaces all backslashes by forward slashes.
 # This helps our Windows users, while not bothering our Unix users.
@@ -33,6 +33,7 @@ Available subcommands are:
   status    Informs you if:
               master is behind source/master
               branches are behind master
+              branches are behind source/master
               branches are not submitted
 
 USAGE
