@@ -43,31 +43,29 @@ help() {
 The assumed OSS contribution workflow and the corresponding commands are:
 
 - git fork new <source> [<destination>] [-o <origin>]
-  1)  Clone an open source project at <destination>
-  2)  Set it as a special remote (<source>)
-  3)  Set up a remote to host your contributions if you wish (-o <origin>)
-  +)  If using GitHub, register <origin> as a GitHub fork of the source
+  1.  Clone an open source project at <destination>
+  2.  Set it as a special remote (<source>)
+  3.  Set up a remote to host your contributions if you wish (-o <origin>)
 
 - git fork start <branch_name>
-  5)  Ensure master is up to date with source
-  4)  Create a branch to develop a contribution (<branchname>)
+  4.  Ensure master is up to date with source
+  5.  Create a branch to develop a contribution (<branchname>)
 
 - git fork update [<branch_names>...] [--all]
-  6)  Periodically update master from source
-  7)  Rebase contribution branches off of master
+  6.  Periodically update master from source
+  7.  Rebase contribution branches off of master
 
-8) Handle merge conflicts during rebase
+8. Handle merge conflicts during rebase
 
 - git fork submit [<branch_names>...] [-r <remote>]
-  9)  Ensure master is up to date with source
-  10) Rebase contribution branches off of master (<branch_names>)
-  11) Push contribution branches to origin or a public remote for approval
-  +)  If using GitHub, submit a pull request for each one
+  8.  Ensure master is up to date with source
+  9.  Rebase contribution branches off of master (<branch_names>)
+  10. Push contribution branches to origin or a public remote for approval
 
-As you can see, using git fork takes care of all steps of the process,
-expect for the handling of merge conflicts during rebase.
+As you can see, using git-fork takes care of all steps of the process,
+expect for handling merge conflicts during rebase.
 
-Existing repos can adopt git fork simply by adding a remote named <source>.
+Existing forks can adopt git-fork simply by adding a remote named <source>.
 
 HELP
 }
