@@ -33,10 +33,10 @@ cmd_help() {
 
 cmd_update(){
 
-  INITIAL_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+  INITIAL_BRANCH=$(current_branch)
 
   # Assert the existance of a <source> remote with <master> branch, or fail
-  if [[ -n "$(git ls-remote source master)" ]]; then
+  if [[ -n "$(branch_exists 'source master')" ]]; then
 
     # Until parameter doesn't exist or is an option
     until [ -z "$1" ] || [[ $1 = -* ]]; do
@@ -52,21 +52,20 @@ cmd_update(){
     parse_opts "$@"
 
     output 'Updating master from <source>...'
-    execute "git checkout master"
+    checkout "master"
     execute "git pull source master"
 
     # If ALL is set
     if [ -n "$ALL" ]; then
       # update all branches
-      for branch in $(git for-each-ref --format='%(refname:short)' refs/heads/); do
+      for branch in $(branches_matching refs/heads/); do
         rebase_branch $branch $REMOTE
       done
 
     # If LOCAL is set
     elif [ -n "$LOCAL" ]; then
       # update all branches that only exist locally
-      local_only_branches # Updates BRANCHES
-      for branch in $BRANCHES; do
+      for branch in $(local_only_branches); do
         rebase_branch $branch $REMOTE
       done
 
@@ -80,7 +79,7 @@ cmd_update(){
 
     # else updating master suffices.
 
-    execute "git checkout $INITIAL_BRANCH"
+    checkout "$INITIAL_BRANCH"
     exit 0
 
   else

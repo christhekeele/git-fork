@@ -23,12 +23,24 @@ line_count() {
   fi
 }
 
-commit_diff_count() {
+branch_exists() {
+  echo $(git show-ref refs/heads/$1)
+}
+
+branches_matching() {
+  echo $(git for-each-ref --format='%(refname:short)' $1)
+}
+
+current_branch() {
+  echo $(git rev-parse --abbrev-ref HEAD)
+}
+
+commit_count() {
   line_count "$(git rev-list $1..$2)"
 }
 
 present_behind() {
-  DIFF=$(commit_diff_count $1 $2)
+  DIFF=$(commit_count $1 $2)
   if [[ $DIFF = '0' ]]; then
     echo "up to date with $2"
   else
@@ -36,17 +48,10 @@ present_behind() {
   fi
 }
 
-branch_status() {
-  # Skip master
-  if [[ "$1" != 'master' ]]; then
-    # Ensure branch exists
-    if [[ -n "$(git show-ref refs/heads/$1)" ]]; then
-      BEHIND_MASTER=$(present_behind $1 master)
-      BEHIND_SOURCE=$(present_behind $1 source/master)
-      output "$1: $BEHIND_MASTER, $BEHIND_SOURCE."
-    else
-      output "Branch $1 not found. Skipping."
-    fi
+checkout() {
+  # Only checkout if neccesary. Saves some time.
+  if [[ $1 != $(current_branch) ]]; then
+    execute "git checkout $1"
   fi
 }
 
@@ -61,15 +66,15 @@ get_git_dir_name() {
   # From an http://github.com/user/repo_name/
   # Or a git@github.com/user/repo_name.git URI
   # Sans prejudice.
-  DIR_NAME=$(echo $1 | grep -Eo '\/.+?(\/)?(.\git)?$' | grep -Eo '[^\/].+[^\/][^\.git]')
+  echo $1 | grep -Eo '\/.+?(\/)?(.\git)?$' | grep -Eo '[^\/].+[^\/][^\.git]'
 }
 
 local_only_branches() {
   BRANCHES=""
   # List local branches by name
-  LOCAL=$(git for-each-ref --format='%(refname:short)' refs/heads/)
+  LOCAL=$(branches_matching refs/heads/)
   # List source branches by source/name
-  SOURCE=$(git for-each-ref --format='%(refname:short)' refs/remotes/source/)
+  SOURCE=$(branches_matching refs/remotes/source/)
   for local in $LOCAL; do
     # If branch is not found in source
     if [[ -z $(echo $SOURCE | grep -Eo "\bsource\/$local\b") ]]; then
@@ -77,16 +82,36 @@ local_only_branches() {
       BRANCHES="$local $BRANCHES"
     fi
   done
+  echo $BRANCHES
+}
+
+branch_status() {
+  # Skip master
+  if [[ "$1" != 'master' ]]; then
+    # Ensure branch exists
+    if [[ -n $(branch_exists $1) ]]; then
+      BEHIND_MASTER=$(present_behind $1 master)
+      BEHIND_SOURCE=$(present_behind $1 source/master)
+      output "$1: $BEHIND_MASTER, $BEHIND_SOURCE."
+    else
+      output "Branch $1 not found. Skipping."
+    fi
+  fi
 }
 
 rebase_branch() {
   # Skip master
   if [ $1 != 'master' ]; then
     # Ensure branch exists
-    if [[ -n "$(git show-ref refs/heads/$1)" ]]; then
-      output "Updating branch $1..."
-      execute "git checkout $1 -q"
-      execute "git rebase master"
+    if [[ -n $(branch_exists $1) ]]; then
+      # If branch needs rebase
+      if [[ $(commit_count $1 master) != '0' ]]; then
+        output "Updating branch $1..."
+        checkout "$1 -q"
+        execute "git rebase master"
+      else
+        output "Branch $1 is already up to date."
+      fi
     else
       output "Branch $1 not found. Skipping."
     fi
@@ -97,10 +122,15 @@ submit_branch() {
   # Skip master
   if [ $1 != 'master' ]; then
     # Ensure branch exists
-    if [[ -n "$(git show-ref refs/heads/$1)" ]]; then
+    if [[ -n $(branch_exists $1) ]]; then
       execute "git fork update $1"
-      execute "git checkout $1"
-      execute "git push $2 $1"
+      # If branch needs to be submitted
+      if [[ $(commit_count $2/$1 $1) != '0' ]]; then
+        checkout "$1"
+        execute "git push $2 $1"
+      else
+        output "Branch $1 is already submitted."
+      fi
     else
       output "Branch $1 not found. Skipping."
     fi

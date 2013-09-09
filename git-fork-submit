@@ -35,7 +35,7 @@ cmd_help() {
 
 cmd_update(){
 
-  INITIAL_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+  INITIAL_BRANCH=$(current_branch)
 
   # Until parameter doesn't exist or is an option
   until [ -z "$1" ] || [[ $1 = -* ]]; do
@@ -56,20 +56,19 @@ cmd_update(){
   fi
 
   # Assert the existance of REMOTE, or fail
-  if [[ -n "$(git ls-remote $REMOTE)" ]]; then
+  if [[ -n "$(branch_exists $REMOTE)" ]]; then
 
     # If ALL is set
     if [ -n "$ALL" ]; then
       # submit all branches
-      for branch in $(git for-each-ref --format='%(refname:short)' refs/heads/); do
+      for branch in $(branches_matching refs/heads/); do
         submit_branch $branch $REMOTE
       done
 
     # If LOCAL is set
     elif [ -n "$LOCAL" ]; then
       # submit all branches that only exist locally
-      local_only_branches # Updates BRANCHES
-      for branch in $BRANCHES; do
+      for branch in $(local_only_branches); do
         submit_branch $branch $REMOTE
       done
 
@@ -83,7 +82,7 @@ cmd_update(){
 
     # else nothing happens.
 
-    execute "git checkout $INITIAL_BRANCH"
+    checkout "$INITIAL_BRANCH"
     exit 0
 
   else

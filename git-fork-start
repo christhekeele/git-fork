@@ -30,7 +30,7 @@ cmd_start(){
   parse_opts "$@"
 
   execute "git fork update"
-  execute "git checkout -b $BRANCH_NAME"
+  checkout "-b $BRANCH_NAME"
 
   exit 0
 }
