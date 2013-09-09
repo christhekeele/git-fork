@@ -2,12 +2,27 @@
 
 usage() {
   cat <<USAGE
-usage: git fork status
+usage: git fork status [-A|--all | -L|--local | <branch_names>...]
+
+Arguments:
+  <branch_names>  List of branches to rebase off of master.
+                  Defaults to the current branch if not on master.
+
+Options:
+  -A | -all       Submits all branches.
+  -L | -local     Submits all branches that only exist locally.
+
 USAGE
 }
 
 help() {
   usage; cat <<HELP
+Ensures <branch_names> are updated, then pushes them to a <remote>.
+
+If <branch_names> are supplied, each branch is rebased off of the fresh master.
+You can also instead submit all branches that only exist locally,
+or every branch.
+
 HELP
 }
 
@@ -16,5 +31,69 @@ cmd_help() {
 }
 
 cmd_status(){
-  echo "git-fork-status is still under dev."
+
+  # Assert the existance of a <source> remote with <master> branch, or fail
+  if [[ -n "$(git ls-remote source master)" ]]; then
+
+    # Until parameter doesn't exist or is an option
+    until [ -z "$1" ] || [[ $1 = -* ]]; do
+      # add it as a branch name
+      BRANCHES="$BRANCHES $1"; shift
+    done
+
+    # If no branches supplied and current is not master, rebase current.
+    if [[ -z "$BRANCHES" ]] && [[ $INITIAL_BRANCH != 'master' ]]; then
+      BRANCHES="$INITIAL_BRANCH"
+    fi
+
+    parse_opts "$@"
+
+    # If ALL is set
+    if [ -n "$ALL" ]; then
+      # get status for all branches
+      for branch in $(git for-each-ref --format='%(refname:short)' refs/heads/); do
+        branch_status $branch
+      done
+
+    # If LOCAL is set
+    elif [ -n "$LOCAL" ]; then
+      # get status for all branches that only exist locally
+      local_only_branches # Updates BRANCHES
+      for branch in $BRANCHES; do
+        branch_status $branch
+      done
+
+    # else if branches were provided or you were on one
+    elif [ -n "$BRANCHES" ]; then
+      # get status for those branches
+      for branch in $BRANCHES; do
+        branch_status $branch
+      done
+    fi
+
+    output "master: $(present_behind master source/master)"
+
+    # else outputting master status suffices.
+
+    exit 0
+
+  else
+    echo 'git-fork expects a branch named <master> in a remote named <source>.'
+    echo 'Please add one to continue.'
+    exit 1
+  fi
+}
+
+parse_opts() {
+  while getopts ":A,all,L,local" option
+  do
+    case "$option" in
+      A | all)
+        ALL=true
+        ;;
+      L | local)
+        LOCAL=true
+        ;;
+    esac
+  done
 }

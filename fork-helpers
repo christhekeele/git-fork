@@ -15,6 +15,41 @@ execute() {
   fi
 }
 
+line_count() {
+  if [[ -z "$1" ]]; then
+    echo '0'
+  else
+    echo "$1" | sed '/^\s*$/d' | wc -l | tr -d ' '
+  fi
+}
+
+commit_diff_count() {
+  line_count "$(git rev-list $1..$2)"
+}
+
+present_behind() {
+  DIFF=$(commit_diff_count $1 $2)
+  if [[ $DIFF = '0' ]]; then
+    echo "up to date with $2"
+  else
+    echo "behind $2 by $DIFF commits"
+  fi
+}
+
+branch_status() {
+  # Skip master
+  if [[ "$1" != 'master' ]]; then
+    # Ensure branch exists
+    if [[ -n "$(git show-ref refs/heads/$1)" ]]; then
+      BEHIND_MASTER=$(present_behind $1 master)
+      BEHIND_SOURCE=$(present_behind $1 source/master)
+      output "$1: $BEHIND_MASTER, $BEHIND_SOURCE."
+    else
+      output "Branch $1 not found. Skipping."
+    fi
+  fi
+}
+
 get_git_dir_name() {
   # Ask me not what this incantation means,
   # For I learned it from a wizard
@@ -27,6 +62,21 @@ get_git_dir_name() {
   # Or a git@github.com/user/repo_name.git URI
   # Sans prejudice.
   DIR_NAME=$(echo $1 | grep -Eo '\/.+?(\/)?(.\git)?$' | grep -Eo '[^\/].+[^\/][^\.git]')
+}
+
+local_only_branches() {
+  BRANCHES=""
+  # List local branches by name
+  LOCAL=$(git for-each-ref --format='%(refname:short)' refs/heads/)
+  # List source branches by source/name
+  SOURCE=$(git for-each-ref --format='%(refname:short)' refs/remotes/source/)
+  for local in $LOCAL; do
+    # If branch is not found in source
+    if [[ -z $(echo $SOURCE | grep -Eo "\bsource\/$local\b") ]]; then
+      # add to local only list
+      BRANCHES="$local $BRANCHES"
+    fi
+  done
 }
 
 rebase_branch() {
@@ -55,19 +105,4 @@ submit_branch() {
       output "Branch $1 not found. Skipping."
     fi
   fi
-}
-
-local_only_branches() {
-  BRANCHES=""
-  # List local branches by name
-  LOCAL=$(git for-each-ref --format='%(refname:short)' refs/heads/)
-  # List source branches by source/name
-  SOURCE=$(git for-each-ref --format='%(refname:short)' refs/remotes/source/)
-  for local in $LOCAL; do
-    # If branch is not found in source
-    if [[ -z $(echo $SOURCE | grep -Eo "\bsource\/$local\b") ]]; then
-      # add to local only list
-      BRANCHES="$local $BRANCHES"
-    fi
-  done
 }
