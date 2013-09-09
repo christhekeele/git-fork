@@ -34,6 +34,7 @@ Available subcommands are:
               master is behind source/master
               branches are behind master
               branches are not submitted
+
 USAGE
 }
 
@@ -67,6 +68,7 @@ As you can see, using git fork takes care of all steps of the process,
 expect for the handling of merge conflicts during rebase.
 
 Existing repos can adopt git fork simply by adding a remote named <source>.
+
 HELP
 }
 

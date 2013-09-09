@@ -2,20 +2,28 @@
 
 usage() {
   cat <<USAGE
-usage: git fork update [<branch_name>] [-A|--all] [-q|--quiet]
+usage: git fork update [<branch_names>...] [-A|--all] [-q|--quiet]
 
 Arguments:
-  <branch_name>   Directory to clone the fork to.
-                  Defaults to the current directory.
+  <branch_names>  List of branches to rebase off of master
 
 Options:
-  -o <origin>     URI of a remote to host your fork at.
+  -A | -all       Updates all branches.
   -q | --quiet    Suppresses output.
+
 USAGE
 }
 
 help() {
   usage; cat <<HELP
+Updates local master from source/master.
+
+If <branch_names> are supplied, each branch is rebased off of the fresh master.
+All branches can be updated, but this is not reccommended as your clone may
+have inherited other non-contribution branches in the initial cloning.
+
+A mechanism for only updating branches that don't exist in source is under dev.
+
 HELP
 }
 

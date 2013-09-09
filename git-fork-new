@@ -12,11 +12,25 @@ Arguments:
 Options:
   -o <origin>     URI of a remote to host your fork at.
   -q | --quiet    Suppresses output.
+
 USAGE
 }
 
 help() {
   usage; cat <<HELP
+Makes a new fork of a <source> repository.
+
+The <source> remote is named as such under the assumption you will be pushing
+contributions to a different remote that you have ownership of.
+
+Like git-clone, you can provide an optional <destination> to fork to.
+Otherwise, the fork is built in your current directory, in a directory
+named after the repository.
+
+An <origin> you have ownership of may be supplied with the -o flag.
+
+Integration with GitHub forks is under dev.
+
 HELP
 }
 

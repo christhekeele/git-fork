@@ -1,0 +1,29 @@
+#!/bin/sh
+
+usage() {
+  cat <<USAGE
+usage: git fork new <source> [<destination>] [-o <origin>] [-q|--quiet]
+
+Arguments:
+  <source>        Cloneable URI of the repo you wish to fork.
+  <destination>   Directory to clone the fork to.
+                  Defaults to the current directory.
+
+Options:
+  -o <origin>     URI of a remote to host your fork at.
+  -q | --quiet    Suppresses output.
+USAGE
+}
+
+help() {
+  usage; cat <<HELP
+HELP
+}
+
+cmd_help() {
+  help; exit 0
+}
+
+cmd_new(){
+
+}
