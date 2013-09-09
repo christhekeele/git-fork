@@ -2,11 +2,11 @@
 # Credit to github.com/localmed/git-jira-flow for this project structure.
 
 if [ "$DEBUG" = "yes" ]; then
-    set -x
+  set -x
 fi
 set -e
 
-export GITFORK_VERSION="0.0.3"
+export GITFORK_VERSION="0.1.0"
 
 # The sed expression here replaces all backslashes by forward slashes.
 # This helps our Windows users, while not bothering our Unix users.
