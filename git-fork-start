@@ -24,7 +24,9 @@ cmd_help() {
 }
 
 cmd_start(){
+  # Required first parameter
   BRANCH_NAME=$1; shift
+
   parse_opts "$@"
 
   execute "git fork update"

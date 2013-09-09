@@ -5,8 +5,10 @@ EXEC_FILES=git-fork
 
 # files that need mode 644
 SCRIPT_FILES =git-fork-new
-SCRIPT_FILES+=git-fork-update
+SCRIPT_FILES+=git-fork-start
+SCRIPT_FILES+=git-fork-status
 SCRIPT_FILES+=git-fork-submit
+SCRIPT_FILES+=git-fork-update
 SCRIPT_FILES+=fork-helpers
 
 all:
