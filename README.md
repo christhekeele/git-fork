@@ -61,7 +61,7 @@ Start developing your documentation with
 $ git fork start rewrite-string-docs
 ```
 
-This makes sure your master is up to date with `source`, and branches off `improve-string-docs` for you to work on.
+This makes sure your master is up to date with `source`, and branches off `rewrite-string-docs` for you to work on.
 
 If your extensive contributions take a few days, and you want to ensure you're developing against Elixir edge, run
 
