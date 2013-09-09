@@ -2,15 +2,15 @@
 
 usage() {
   cat <<USAGE
-usage: git fork status [-A | -L | <branch_names>...] [-r <remote>]
+usage: git fork status [<branch_names>... | -L | -A] [-r <remote>]
 
 Arguments:
-  <branch_names>  List of branches to rebase off of master.
+  <branch_names>  List of branches to display fork information about.
                   Defaults to the current branch if not on master.
 
 Options:
-  -A              Submits all branches.
-  -L              Submits all branches that only exist locally.
+  -A              Displays states for all branches.
+  -L              Displays states for all branches that only exist locally.
   -r <remote>     Remote to check submission status against.
                   Tries origin if not specified.
 
@@ -19,11 +19,16 @@ USAGE
 
 help() {
   usage; cat <<HELP
-Ensures <branch_names> are updated, then pushes them to a <remote>.
+Displays the state of your fork. Always shows you how far behind master is
+from source/master.
 
-If <branch_names> are supplied, each branch is rebased off of the fresh master.
-You can also instead submit all branches that only exist locally,
-or every branch.
+If <branch_names> are supplied, information about each branch is displayed:
+How far it's behind master and source/master, and ahead of <remote>.
+
+You can also instead query all branches that only exist locally (+ master),
+or every branch, through the -L and -A flags.
+
+-A overrides -L overrides <branch_names>.
 
 HELP
 }

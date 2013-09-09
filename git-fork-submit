@@ -2,7 +2,7 @@
 
 usage() {
   cat <<USAGE
-usage: git fork submit [-A | -L | <branch_names>...] [-r <remote>] [-q]
+usage: git fork submit [<branch_names>... | -L | -A] [-r <remote>] [-q]
 
 Arguments:
   <branch_names>  List of branches to rebase off of master.
@@ -24,7 +24,9 @@ Ensures <branch_names> are updated, then pushes them to a <remote>.
 
 If <branch_names> are supplied, each branch is rebased off of the fresh master.
 You can also instead submit all branches that only exist locally,
-or every branch.
+or every branch, through the -L and -A flags.
+
+-A overrides -L overrides <branch_names>.
 
 HELP
 }

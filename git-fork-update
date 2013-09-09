@@ -2,7 +2,7 @@
 
 usage() {
   cat <<USAGE
-usage: git fork update [-A | -L | <branch_names>...] [-q]
+usage: git fork update [<branch_names>... | -L | -A] [-q]
 
 Arguments:
   <branch_names>  List of branches to rebase off of master.
@@ -22,7 +22,9 @@ Updates local master from source/master.
 
 If <branch_names> are supplied, each branch is rebased off of the fresh master.
 You can also instead update all branches that only exist locally (+ master),
-or every branch.
+or every branch, through the -L and -A flags.
+
+-A overrides -L overrides <branch_names>.
 
 HELP
 }
