@@ -21,16 +21,7 @@ The process for contributing to open source git repositories is well established
 11. Push contribution branches to your public remote for approval
 12. Repeat until your contribution meets approval and gets merged in
 
-None of this is exactly hard... but it's a lot of extra typing for a very standard workflow. It's practically begging to be abstracted. In fact, only step 8 can't done via script. We have more productive things to be typing than
-
-```bash
-$ git checkout master
-$ git pull source master
-$ git checkout contrib
-$ git rebase master
-```
-
-every time we're concerned we're getting behind.
+None of this is exactly hard... but it's a lot of extra typing for a very standard workflow. It's practically begging to be abstracted. In fact, only step 8 can't done via script. We have more productive things to be typing than [a bunch of boilerplate commands](SHOWDOWN.md) every time we're concerned we're getting behind.
 
 `git-fork` provides several commands that save you most of this typing and promotes good contribution patterns. It plays well with GitHub forks, but is in no way restricted to any particular host—it's purely a local workflow tool.
 
@@ -67,7 +58,7 @@ This clones elixir locally, with a `source` remote pointing to the source code a
 Start developing your documentation with
 
 ```bash
-$ git fork start update-string-docs
+$ git fork start rewrite-string-docs
 ```
 
 This makes sure your master is up to date with `source`, and branches off `improve-string-docs` for you to work on.
