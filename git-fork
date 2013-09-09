@@ -1,0 +1,107 @@
+#!/bin/sh
+# Credit to github.com/localmed/git-jira-flow for this project structure.
+
+if [ "$DEBUG" = "yes" ]; then
+    set -x
+fi
+set -e
+
+export GITFORK_VERSION="0.0.1"
+
+# The sed expression here replaces all backslashes by forward slashes.
+# This helps our Windows users, while not bothering our Unix users.
+export GITFORK_DIR=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
+
+
+usage() {
+  cat <<USAGE
+usage: git fork <subcommand>
+
+Git fork abstracts away the process of making OSS contributions.
+It integrates with GitHub's fork system, but is host-agnostic in
+its implementation.
+
+Available subcommands are:
+  help     Displays in-depth help
+  version  Displays git-fork version
+  new      Forks the given repository
+  start    Updates master from source and creates a new branch
+  update   Pulls the source into master and rebases branches against it
+  submit   Updates your fork and sends a pull request
+USAGE
+}
+
+help() {
+  cat <<HELP
+The assumed OSS contribution workflow and the corresponding commands are:
+
+- git fork new <source> [<destination>] [-o <origin>]
+  1)  Clone an open source project at <destination>
+  2)  Set it as a special remote (<source>)
+  3)  Set up a remote to host your contributions if you wish (-o <origin>)
+  +)  If using GitHub, register <origin> as a GitHub fork of the source
+
+- git fork start <branchname>
+  5)  Ensure master is up to date with source
+  4)  Create a branch to develop a contribution (<branchname>)
+
+- git fork update [<branchname>] [--all]
+  6)  Periodically update master from source
+  7)  Rebase contribution branches off of master
+
+8) Handle merge conflicts during rebase
+
+- git fork submit <branchname> [-o <origin>]
+  9)  Ensure master is up to date with source
+  10) Rebase contribution branch off of master (<branchname>)
+  11) Push contribution branch to a public remote for approval
+  +)  If using GitHub, fork a pull request
+
+As you can see, using git fork takes care of all steps of the process,
+expect for the handling of merge conflicts during rebase.
+
+Existing repos can adopt git fork simply by adding a remote named <source>.
+HELP
+}
+
+version() {
+  echo $GITFORK_VERSION
+}
+
+
+main() {
+  if [ "$#" -lt 1 ]; then
+    usage; exit 1
+  fi
+
+  source "$GITFORK_DIR/fork-helpers"
+
+  local subcommand="$1"; shift
+  case $subcommand in
+    "-h"|"--help"|"help")
+      usage; help; exit 0
+      ;;
+    "-v"|"--version"|"version")
+      version; exit 0
+      ;;
+  esac
+
+  if [ ! -e "$GITFORK_DIR/git-fork-$subcommand" ]; then
+    usage; exit 1
+  fi
+  source "$GITFORK_DIR/git-fork-$subcommand"
+
+  case $1 in
+    "-h"|"--help"|"help")
+      subcommand="help"
+      ;;
+  esac
+
+  if [ ! type "cmd_$subcommand" >/dev/null 2>&1 ]; then
+    usage; exit 1
+  fi
+
+  cmd_$subcommand "$@"
+}
+
+main "$@"
