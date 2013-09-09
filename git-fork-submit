@@ -2,7 +2,7 @@
 
 usage() {
   cat <<USAGE
-usage: git fork new <source> [<destination>] [-o <origin>]
+usage: git fork new <source> [<destination>] [-o <origin>] [-q|--quiet]
 
 Arguments:
   <source>        Cloneable URI of the repo you wish to fork.
@@ -11,16 +11,17 @@ Arguments:
 
 Options:
   -o <origin>     URI of a remote to host your fork at.
+  -q | --quiet    Suppresses output.
 USAGE
 }
 
 help() {
-  cat <<HELP
+  usage; cat <<HELP
 HELP
 }
 
 cmd_help() {
-  usage; help; exit 0
+  help; exit 0
 }
 
 cmd_new(){

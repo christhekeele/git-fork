@@ -6,11 +6,13 @@ if [ "$DEBUG" = "yes" ]; then
 fi
 set -e
 
-export GITFORK_VERSION="0.0.1"
+export GITFORK_VERSION="0.0.2"
 
 # The sed expression here replaces all backslashes by forward slashes.
 # This helps our Windows users, while not bothering our Unix users.
 export GITFORK_DIR=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
+
+export CALL_DIR=$(pwd)
 
 
 usage() {
@@ -22,17 +24,17 @@ It integrates with GitHub's fork system, but is host-agnostic in
 its implementation.
 
 Available subcommands are:
-  help     Displays in-depth help
-  version  Displays git-fork version
-  new      Forks the given repository
-  start    Updates master from source and creates a new branch
-  update   Pulls the source into master and rebases branches against it
-  submit   Updates your fork and sends a pull request
+  help      Displays in-depth help
+  version   Displays git-fork version
+  new       Forks the given repository
+  start     Updates master from source and creates a new branch
+  update    Pulls the source into master and rebases branches against it
+  submit    Updates your fork and sends a pull request
 USAGE
 }
 
 help() {
-  cat <<HELP
+  usage; cat <<HELP
 The assumed OSS contribution workflow and the corresponding commands are:
 
 - git fork new <source> [<destination>] [-o <origin>]
@@ -79,7 +81,7 @@ main() {
   local subcommand="$1"; shift
   case $subcommand in
     "-h"|"--help"|"help")
-      usage; help; exit 0
+      help; exit 0
       ;;
     "-v"|"--version"|"version")
       version; exit 0

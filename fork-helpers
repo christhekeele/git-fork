@@ -1,1 +1,44 @@
 #!/bin/sh
+
+output() {
+  if [[ -z "$QUIET" ]]; then
+    echo $1
+  fi
+}
+
+# This shit is why Aspect oriented programming exists.
+execute() {
+  if [[ -z "$QUIET" ]]; then
+    eval "$1"
+  else
+    eval "$1 -q"
+  fi
+}
+
+get_git_dir_name() {
+  # Ask me not what this incantation means,
+  # For I learned it from a wizard
+  # Who heard it from a witch
+  # Who spent 40 minutes dicking around in her terminal
+  # Unitl it worked.
+  # All I knowst
+  # Is that it strippith the repo name
+  # From an http://github.com/user/repo_name/
+  # Or a git@github.com/user/repo_name.git URI
+  # Sans prejudice.
+  eval "DIR_NAME=$(echo $1 | grep -Eo '\/.+?(\/)?(.\git)?$' | grep -Eo '[^\/].+[^\/][^\.git]')"
+}
+
+rebase_branch() {
+  # Skip master
+  if [ $1 != 'master' ]; then
+    # Ensure branch exists
+    if [[ -n "$(git show-ref refs/heads/$1)" ]]; then
+      output "Updating branch $1..."
+      execute "git checkout $1 -q"
+      execute "git rebase master"
+    else
+      output "Branch $1 not found. Skipping."
+    fi
+  fi
+}

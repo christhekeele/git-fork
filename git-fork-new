@@ -2,7 +2,7 @@
 
 usage() {
   cat <<USAGE
-usage: git fork new <source> [<destination>] [-o <origin>]
+usage: git fork new <source> [<destination>] [-o <origin>] [-q|--quiet]
 
 Arguments:
   <source>        Cloneable URI of the repo you wish to fork.
@@ -11,19 +11,62 @@ Arguments:
 
 Options:
   -o <origin>     URI of a remote to host your fork at.
+  -q | --quiet    Suppresses output.
 USAGE
 }
 
 help() {
-  cat <<HELP
+  usage; cat <<HELP
 HELP
 }
 
 cmd_help() {
-  usage; help; exit 0
+  help; exit 0
 }
 
 cmd_new(){
-  git clone $1 $2
+  # Required first parameter
+  SOURCE=$1; shift
+  # If next parameter exists and is not an option
+  if [ -n "$1" ] && [[ $1 != -* ]]; then
+    # use it as a destination
+    DESTINATION=$1; shift
+  else
+    # determine the implicit destination
+    # from the working directory and the source repo name
+    DIR_NAME=$SOURCE
+    get_git_dir_name "$DIR_NAME"
+    DESTINATION="$CALL_DIR/$DIR_NAME"
+  fi
+
+  parse_opts "$@"
+
+  execute "git clone $SOURCE $DESTINATION"
+  cd $DESTINATION
+  output "Setting $SOURCE as <source> remote."
+  git remote rename origin source
+
+  if [[ "$ORIGIN" ]]; then
+    output "Setting $ORIGIN as <origin> remote."
+    git remote add origin $ORIGIN
+  fi
+
   exit 0
+}
+
+parse_opts() {
+  while getopts ":o:,q,quiet" option
+  do
+    case "$option" in
+      o)
+        ORIGIN="$OPTARG"
+        ;;
+      q | quiet)
+        QUIET=true
+        ;;
+      *)
+        usage; exit 1
+        ;;
+    esac
+  done
 }
