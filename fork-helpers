@@ -48,6 +48,15 @@ present_behind() {
   fi
 }
 
+present_ahead() {
+  DIFF=$(commit_count $1 $2)
+  if [[ $DIFF = '0' ]]; then
+    echo "up to date with $1"
+  else
+    echo "ahead $1 by $DIFF commits"
+  fi
+}
+
 checkout() {
   # Only checkout if neccesary. Saves some time.
   if [[ $1 != $(current_branch) ]]; then
@@ -92,7 +101,13 @@ branch_status() {
     if [[ -n $(branch_exists $1) ]]; then
       BEHIND_MASTER=$(present_behind $1 master)
       BEHIND_SOURCE=$(present_behind $1 source/master)
-      output "$1: $BEHIND_MASTER, $BEHIND_SOURCE."
+      # Try remote
+      if [[ -n "$2" ]] && [[ -n $(branches_matching "refs/remotes/$2/$1") ]]; then
+        AHEAD_REMOTE=$(present_ahead $2/$1 $1)
+      else
+        AHEAD_REMOTE="submission status unkown"
+      fi
+      output "$1: $BEHIND_MASTER, $BEHIND_SOURCE, $AHEAD_REMOTE."
     else
       output "Branch $1 not found. Skipping."
     fi

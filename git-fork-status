@@ -2,7 +2,7 @@
 
 usage() {
   cat <<USAGE
-usage: git fork status [-A|--all | -L|--local | <branch_names>...]
+usage: git fork status [-A|--all | -L|--local | <branch_names>...] [-r <remote>]
 
 Arguments:
   <branch_names>  List of branches to rebase off of master.
@@ -11,6 +11,8 @@ Arguments:
 Options:
   -A | -all       Submits all branches.
   -L | -local     Submits all branches that only exist locally.
+  -r <remote>     Remote to check submission status against.
+                  Tries origin if not specified.
 
 USAGE
 }
@@ -50,25 +52,30 @@ cmd_status(){
 
     parse_opts "$@"
 
+    # If no remote specified, try origin
+    if [[ -z "$REMOTE" ]]; then
+      REMOTE='origin'
+    fi
+
     # If ALL is set
     if [ -n "$ALL" ]; then
       # get status for all branches
       for branch in $(branches_matching refs/heads/); do
-        branch_status $branch
+        branch_status $branch $REMOTE
       done
 
     # If LOCAL is set
     elif [ -n "$LOCAL" ]; then
       # get status for all branches that only exist locally
       for branch in $(local_only_branches); do
-        branch_status $branch
+        branch_status $branch $REMOTE
       done
 
     # else if branches were provided or you were on one
     elif [ -n "$BRANCHES" ]; then
       # get status for those branches
       for branch in $BRANCHES; do
-        branch_status $branch
+        branch_status $branch $REMOTE
       done
     fi
 
@@ -86,7 +93,7 @@ cmd_status(){
 }
 
 parse_opts() {
-  while getopts ":A,all,L,local" option
+  while getopts ":A,all,L,local,r:" option
   do
     case "$option" in
       A | all)
@@ -94,6 +101,9 @@ parse_opts() {
         ;;
       L | local)
         LOCAL=true
+        ;;
+      r)
+        REMOTE="$OPTARG"
         ;;
     esac
   done

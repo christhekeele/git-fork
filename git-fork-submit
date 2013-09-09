@@ -33,7 +33,7 @@ cmd_help() {
   help; exit 0
 }
 
-cmd_update(){
+cmd_submit(){
 
   INITIAL_BRANCH=$(current_branch)
 
