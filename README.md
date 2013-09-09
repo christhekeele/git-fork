@@ -21,14 +21,14 @@ The process for contributing to open source git repositories is well established
 11. Push contribution branches to your public remote for approval
 12. Repeat until your contribution meets approval and gets merged in
 
-None of this is exactly hard... but it's a lot of extra typing for a very standard workflow. It's practically begging to be abstracted. In fact, only step 8 can't done via script. We have more productive things to be typing than [a bunch of boilerplate commands](SHOWDOWN.md) every time we're concerned we're getting behind.
+None of this is exactly hard... but it's a lot of extra typing for a very standard workflow. It's practically begging to be abstracted. In fact, only step 8 can't done via script. We have more productive things to be typing than [a bunch of boilerplate commands](PROBLEM.md) every time we're concerned we're getting behind.
 
 `git-fork` provides several commands that save you most of this typing and promotes good contribution patterns. It plays well with GitHub forks, but is in no way restricted to any particular host—it's purely a local workflow tool.
 
 Installation
 ------------
 
-Installation is done through git, although I'd like to put `git-fork` on homebrew eventually.
+Installation is done through git, although I'd like to put `git-fork` on a homebrew tap eventually.
 
 ``` bash
 $ git clone git@github.com:christhekeele/git-fork.git
@@ -90,7 +90,7 @@ Much better.
 Dependencies
 ------------
 
-`git-fork` does not currently work on Windows, although this may change in the future. Aside from the obvious `git` dependency, it uses `cd`, `grep`, and `sed` under the hood.
+`git-fork` does not currently work on Windows, although this may change in the future. Aside from the obvious `git` dependency, it uses `cd`, `grep`, and `sed` and several others under the hood. I have no idea what goes into making cross-OS-compatible shell scripts, so here we are.
 
 Contributing
 ------------

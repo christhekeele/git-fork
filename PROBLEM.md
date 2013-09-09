@@ -1,7 +1,7 @@
-git-fork Showdown
-=================
+The Forking Problem
+===================
 
-This is a comparison of a normal git fork workflow to `git-fork`'s workflow. It uses the example from the [README](README.md#usage).
+This is a comparison of a normal git fork workflow to `git-fork`'s workflow, to illustrate the verbosity of normal fork management. It uses the example from the [README](README.md#usage).
 
 Some talking points:
 
