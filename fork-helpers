@@ -26,7 +26,7 @@ get_git_dir_name() {
   # From an http://github.com/user/repo_name/
   # Or a git@github.com/user/repo_name.git URI
   # Sans prejudice.
-  eval "DIR_NAME=$(echo $1 | grep -Eo '\/.+?(\/)?(.\git)?$' | grep -Eo '[^\/].+[^\/][^\.git]')"
+  DIR_NAME=$(echo $1 | grep -Eo '\/.+?(\/)?(.\git)?$' | grep -Eo '[^\/].+[^\/][^\.git]')
 }
 
 rebase_branch() {
@@ -55,4 +55,19 @@ submit_branch() {
       output "Branch $1 not found. Skipping."
     fi
   fi
+}
+
+local_only_branches() {
+  BRANCHES=""
+  # List local branches by name
+  LOCAL=$(git for-each-ref --format='%(refname:short)' refs/heads/)
+  # List source branches by source/name
+  SOURCE=$(git for-each-ref --format='%(refname:short)' refs/remotes/source/)
+  for local in $LOCAL; do
+    # If branch is not found in source
+    if [[ -z $(echo $SOURCE | grep -Eo "\bsource\/$local\b") ]]; then
+      # add to local only list
+      BRANCHES="$local $BRANCHES"
+    fi
+  done
 }

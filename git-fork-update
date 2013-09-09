@@ -2,7 +2,7 @@
 
 usage() {
   cat <<USAGE
-usage: git fork update [<branch_names>...] [-A|--all] [-q|--quiet]
+usage: git fork update [-A|--all | -L|--local | <branch_names>...] [-q|--quiet]
 
 Arguments:
   <branch_names>  List of branches to rebase off of master.
@@ -10,6 +10,7 @@ Arguments:
 
 Options:
   -A | -all       Updates all branches.
+  -L | -local     Updates all branches that only exist locally.
   -q | --quiet    Suppresses output.
 
 USAGE
@@ -20,10 +21,8 @@ help() {
 Updates local master from source/master.
 
 If <branch_names> are supplied, each branch is rebased off of the fresh master.
-All branches can be updated, but this is not recommended as your fork may
-have inherited other non-contribution branches in its initial cloning.
-
-A mechanism for only updating branches that don't exist in source is under dev.
+You can also instead update all branches that only exist locally (+ master),
+or every branch.
 
 HELP
 }
@@ -60,14 +59,22 @@ cmd_update(){
     if [ -n "$ALL" ]; then
       # update all branches
       for branch in $(git for-each-ref --format='%(refname:short)' refs/heads/); do
-        rebase_branch $branch
+        rebase_branch $branch $REMOTE
       done
 
-    # else if branches were provided
+    # If LOCAL is set
+    elif [ -n "$LOCAL" ]; then
+      # update all branches that only exist locally
+      local_only_branches # Updates BRANCHES
+      for branch in $BRANCHES; do
+        rebase_branch $branch $REMOTE
+      done
+
+    # else if branches were provided or you were on one
     elif [ -n "$BRANCHES" ]; then
       # update those branches
       for branch in $BRANCHES; do
-        rebase_branch $branch
+        rebase_branch $branch $REMOTE
       done
     fi
 
@@ -85,11 +92,14 @@ cmd_update(){
 }
 
 parse_opts() {
-  while getopts ":A,all,q,quiet" option
+  while getopts ":A,all,L,local,q,quiet" option
   do
     case "$option" in
       A | all)
         ALL=true
+        ;;
+      L | local)
+        LOCAL=true
         ;;
       q | quiet)
         QUIET=true

@@ -53,7 +53,7 @@ $           -o git@github.com:christhekeele/elixir
 $ cd elixir
 ```
 
-This clones elixir locally, with a `source` remote pointing to the source code and `origin` pointing to your version.
+This clones Elixir locally, with a `source` remote pointing to the source code and `origin` pointing to your version.
 
 Start developing your documentation with
 
