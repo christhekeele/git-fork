@@ -30,6 +30,10 @@ Available subcommands are:
   start     Updates master from source and creates a new branch
   update    Pulls the source into master and rebases branches against it
   submit    Updates your fork and sends a pull request
+  status    Informs you if:
+              master is behind source/master
+              branches are behind master
+              branches are not submitted
 USAGE
 }
 
