@@ -8,7 +8,7 @@ Some talking points:
 - One might say we're being a little paranoid with our updates in this trivial scenario, but it's reasonable to assume you'd be wanting to update more than once for any sustained development. `git-fork` is paranoid for you, and makes sustained development a breeze.
 - `git-fork` supports updating and submitting multiple contribution branches in one pass. The equivalent to that in normal git workflow is omitted for the sake of brevity.
 - If you have a fork with multiple contributions in progress, `git fork status -L`
-can easily traverse them all.
+can easily traverse them all and advise you of thier states.
 
 Normal Git Workflow
 -------------------
