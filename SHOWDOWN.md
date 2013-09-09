@@ -1,7 +1,7 @@
 git-fork Showdown
 =================
 
-This is a comparison of a normal git fork workflow to `git-fork`'s workflow. It uses the example from the [README](README.md#usage). One might say we're being a little paranoid with our updates in this trivial scenario, but it's reasonable to assume you'd be wanting to update more than once for any sustained development. `git-flow` is paranoid for you, and makes sustained development a breeze.
+This is a comparison of a normal git fork workflow to `git-fork`'s workflow. It uses the example from the [README](README.md#usage). One might say we're being a little paranoid with our updates in this trivial scenario, but it's reasonable to assume you'd be wanting to update more than once for any sustained development. `git-flow` is paranoid for you, and makes sustained development a breeze. Furthermore, it supports updating multiple contribution branches in one pass... the equivalent to that in normal git workflow is omitted for the sake of brevity.
 
 Normal Git Workflow
 -------------------
