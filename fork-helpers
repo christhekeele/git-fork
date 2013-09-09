@@ -42,3 +42,17 @@ rebase_branch() {
     fi
   fi
 }
+
+submit_branch() {
+  # Skip master
+  if [ $1 != 'master' ]; then
+    # Ensure branch exists
+    if [[ -n "$(git show-ref refs/heads/$1)" ]]; then
+      execute "git fork update $1"
+      execute "git checkout $1"
+      execute "git push $2 $1"
+    else
+      output "Branch $1 not found. Skipping."
+    fi
+  fi
+}

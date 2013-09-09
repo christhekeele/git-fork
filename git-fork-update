@@ -5,7 +5,8 @@ usage() {
 usage: git fork update [<branch_names>...] [-A|--all] [-q|--quiet]
 
 Arguments:
-  <branch_names>  List of branches to rebase off of master
+  <branch_names>  List of branches to rebase off of master.
+                  Defaults to the current branch if not on master.
 
 Options:
   -A | -all       Updates all branches.
@@ -19,8 +20,8 @@ help() {
 Updates local master from source/master.
 
 If <branch_names> are supplied, each branch is rebased off of the fresh master.
-All branches can be updated, but this is not reccommended as your clone may
-have inherited other non-contribution branches in the initial cloning.
+All branches can be updated, but this is not recommended as your fork may
+have inherited other non-contribution branches in its initial cloning.
 
 A mechanism for only updating branches that don't exist in source is under dev.
 
@@ -44,13 +45,16 @@ cmd_update(){
       BRANCHES="$BRANCHES $1"; shift
     done
 
+    # If no branches supplied and current is not master, rebase current.
+    if [[ -z "$BRANCHES" ]] && [[ $INITIAL_BRANCH != 'master' ]]; then
+      BRANCHES="$INITIAL_BRANCH"
+    fi
+
     parse_opts "$@"
 
     output 'Updating master from <source>...'
     execute "git checkout master"
     execute "git pull source master"
-
-echo "$BRANCHES"
 
     # If ALL is set
     if [ -n "$ALL" ]; then

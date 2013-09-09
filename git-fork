@@ -6,7 +6,7 @@ if [ "$DEBUG" = "yes" ]; then
 fi
 set -e
 
-export GITFORK_VERSION="0.0.2"
+export GITFORK_VERSION="0.0.3"
 
 # The sed expression here replaces all backslashes by forward slashes.
 # This helps our Windows users, while not bothering our Unix users.
@@ -48,21 +48,21 @@ The assumed OSS contribution workflow and the corresponding commands are:
   3)  Set up a remote to host your contributions if you wish (-o <origin>)
   +)  If using GitHub, register <origin> as a GitHub fork of the source
 
-- git fork start <branchname>
+- git fork start <branch_name>
   5)  Ensure master is up to date with source
   4)  Create a branch to develop a contribution (<branchname>)
 
-- git fork update [<branchname>] [--all]
+- git fork update [<branch_names>...] [--all]
   6)  Periodically update master from source
   7)  Rebase contribution branches off of master
 
 8) Handle merge conflicts during rebase
 
-- git fork submit <branchname> [-o <origin>]
+- git fork submit [<branch_names>...] [-r <remote>]
   9)  Ensure master is up to date with source
-  10) Rebase contribution branch off of master (<branchname>)
-  11) Push contribution branch to a public remote for approval
-  +)  If using GitHub, fork a pull request
+  10) Rebase contribution branches off of master (<branch_names>)
+  11) Push contribution branches to origin or a public remote for approval
+  +)  If using GitHub, submit a pull request for each one
 
 As you can see, using git fork takes care of all steps of the process,
 expect for the handling of merge conflicts during rebase.
