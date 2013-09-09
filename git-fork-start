@@ -2,21 +2,20 @@
 
 usage() {
   cat <<USAGE
-usage: git fork new <source> [<destination>] [-o <origin>] [-q|--quiet]
+usage: git fork start <branch_name> [-q|--quiet]
 
 Arguments:
-  <source>        Cloneable URI of the repo you wish to fork.
-  <destination>   Directory to clone the fork to.
-                  Defaults to the current directory.
+  <branch_name>   A new branch in which to start a contribution.
 
 Options:
-  -o <origin>     URI of a remote to host your fork at.
   -q | --quiet    Suppresses output.
 USAGE
 }
 
 help() {
   usage; cat <<HELP
+Updates source/master and creates a new branch off of it start a contribution.
+
 HELP
 }
 
@@ -24,6 +23,26 @@ cmd_help() {
   help; exit 0
 }
 
-cmd_new(){
+cmd_start(){
+  BRANCH_NAME=$1; shift
+  parse_opts "$@"
 
+  execute "git fork update"
+  execute "git checkout -b $BRANCH_NAME"
+
+  exit 0
+}
+
+parse_opts() {
+  while getopts ":q,quiet" option
+  do
+    case "$option" in
+      q | quiet)
+        QUIET=true
+        ;;
+      *)
+        usage; exit 1
+        ;;
+    esac
+  done
 }
