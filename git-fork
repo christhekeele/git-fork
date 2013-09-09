@@ -58,9 +58,9 @@ The assumed OSS contribution workflow and the corresponding commands are:
 8. Handle merge conflicts during rebase
 
 - git fork submit [<branch_names>...] [-r <remote>]
-  8.  Ensure master is up to date with source
-  9.  Rebase contribution branches off of master (<branch_names>)
-  10. Push contribution branches to origin or a public remote for approval
+  9.  Ensure master is up to date with source
+  10.  Rebase contribution branches off of master (<branch_names>)
+  11. Push contribution branches to origin or a public remote for approval
 
 As you can see, using git-fork takes care of all steps of the process,
 expect for handling merge conflicts during rebase.
