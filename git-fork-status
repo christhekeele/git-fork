@@ -22,8 +22,10 @@ help() {
 Displays the state of your fork. Always shows you how far behind master is
 from source/master.
 
-If <branch_names> are supplied, information about each branch is displayed:
-How far it's behind master and source/master, and ahead of <remote>.
+If <branch_names> are supplied, information about each branch is displayed.
+It tells you how far it's behind master and source/master, so you can update.
+If origin exists or another <remote> is supplied, it will also tell you how far
+ahead each branch is of any corresponding remote branches, so you can submit.
 
 You can also instead query all branches that only exist locally (+ master),
 or every branch, through the -L and -A flags.

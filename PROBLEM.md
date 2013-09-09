@@ -7,8 +7,8 @@ Some talking points:
 
 - One might say we're being a little paranoid with our updates in this trivial scenario, but it's reasonable to assume you'd be wanting to update more than once for any sustained development. `git-fork` is paranoid for you, and makes sustained development a breeze.
 - `git-fork` supports updating and submitting multiple contribution branches in one pass. The equivalent to that in normal git workflow is omitted for the sake of brevity.
-- `git-fork` is smart, and allows you to omit the contribution branch name if you're already on it. We include it here for the sake of clarity and fairness.
-- `git-fork` also avoids issuing checkouts when not needed.
+- If you have a fork with multiple contributions in progress, `git fork status -L`
+can easily traverse them all.
 
 Normal Git Workflow
 -------------------
@@ -63,13 +63,13 @@ cd elixir
 git fork start rewrite-string-docs
 
 # Updating
-git fork update rewrite-string-docs
+git fork update
 
 # Submitting
-git fork submit rewrite-string-docs
+git fork submit
 
 # Resubmitting
-git fork update rewrite-string-docs
+git fork update
 # ...do some work
-git fork submit rewrite-string-docs
+git fork submit
 ```
