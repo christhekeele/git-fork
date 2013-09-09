@@ -45,7 +45,7 @@ $ cd git-fork
 $ sudo make install
 ```
 
-By default, git-fork will be installed in /usr/local. To change the prefix where git-fork will be installed, simply specify it explicitly, using:
+By default, `git-fork` will be installed in `/usr/local`. To change the prefix where git-fork will be installed, simply specify it explicitly, using:
 
 ``` bash
 $ sudo make prefix=$HOME install
@@ -72,7 +72,7 @@ $ git fork start update-string-docs
 
 This makes sure your master is up to date with `source`, and branches off `improve-string-docs` for you to work on.
 
-If your extensive contributions take a few days, and you want to ensure you're developing against elixir edge, run
+If your extensive contributions take a few days, and you want to ensure you're developing against Elixir edge, run
 
 ```bash
 $ git fork update
@@ -86,7 +86,7 @@ When you're done with your contribution, just run
 $ git fork submit
 ```
 
-This will update your branch one last time, then push it off to a corresponding branch on `origin`. All that's left is go to `www.github.com/christhekeele/elixir/tree/improve-string-docs` and submit a pull request back to `elixir-lang/elixir`. If you decide to make improvements you your request, you can revisit your branch and run
+This will update your branch one last time, then push it off to a corresponding branch on `origin`. All that's left is go to `www.github.com/christhekeele/elixir/tree/improve-string-docs` and submit a pull request back to `elixir-lang/elixir`. If you decide to make improvements to your request, you can revisit your branch and run
 
 ```bash
 $ git fork update
@@ -99,18 +99,11 @@ Much better.
 Dependencies
 ------------
 
-This extension depends on the commands:
-
-- cd
-- git
-- grep
-- sed
-
-It is not currently expected to work on Windows, although this may change in the future.
+`git-fork` does not currently work on Windows, although this may change in the future. Aside from the obvious `git` dependency, it uses `cd`, `grep`, and `sed` under the hood.
 
 Contributing
 ------------
 
 You know the drill: clone `git-fork`, and then... use it. That's the problem it's trying to solve, after all.
 
-If it's sufficiently broken that you can't use it to fix itself, please open an [issue](https://www.github.com/christhekeele/git-fork)!
+If it's sufficiently broken that you can't use it to fix itself, please open an [issue](https://www.github.com/christhekeele/git-fork/issues)!
