@@ -39,21 +39,11 @@ cmd_help() {
 }
 
 cmd_new(){
-  # Required first parameter
-  local source=$1; shift
-  local destination=''
-  local origin=''
+  local source=''
+  local destination
+  local origin
 
-  # If next parameter exists and is not an option
-  if [ -n "$1" ] && [[ $1 != -* ]]; then
-    # use it as a destination
-    destination=$1; shift
-  else
-    # determine the implicit destination
-    # from the working directory and the source repo name"
-    destination="$CALL_DIR/$(get_git_dir_name $source)"
-  fi
-
+  parse_args "$@"
   parse_opts "$@"
 
   execute "git clone $source $destination"
@@ -61,12 +51,25 @@ cmd_new(){
   output "Setting $source as <source> remote."
   git remote rename origin source
 
-  if [[ "$origin" ]]; then
+  if [[ -n $origin ]]; then
     output "Setting $origin as <origin> remote."
     git remote add origin $origin
   fi
 
   exit 0
+}
+
+parse_args() {
+  source=$1; shift
+  # If next parameter exists and is not an option
+  if [ -n "$1" ] && [[ $1 != -* ]]; then
+    # use it as a destination
+    destination=$1; shift
+  else
+    # determine the implicit destination
+    # from the working directory and the source repo name"
+    destination="$CALL_DIR/$(git_dir_name $source)"
+  fi
 }
 
 parse_opts() {
