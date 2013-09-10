@@ -38,11 +38,24 @@ cmd_help() {
 cmd_submit(){
 
   local initial_branch=$(current_branch)
-  local remote=''
-  local branches=''
-  local all_branches=''
-  local local_branches=''
+  local remote
+  local branches
 
+  parse_args "$@"
+  parse_opts "$@"
+
+  assert_ref_exists $remote
+
+  for branch in $branches; do
+    submit_branch $branch $remote
+  done
+
+  checkout "$initial_branch"
+  exit 0
+
+}
+
+parse_args() {
   # Until parameter doesn't exist or is an option
   until [ -z "$1" ] || [[ $1 = -* ]]; do
     # add it as a branch name
@@ -53,61 +66,17 @@ cmd_submit(){
   if [[ -z "$branches" ]] && [[ $initial_branch != 'master' ]]; then
     branches="$initial_branch"
   fi
-
-  parse_opts "$@"
-
-  # If no remote specified, use origin
-  if [[ -z "$remote" ]]; then
-    remote='origin'
-  fi
-
-  # Assert the existance of remote, or fail
-  if [[ -n "$(branch_exists $remote)" ]]; then
-
-    # If all_branches is set
-    if [ -n "$all_branches" ]; then
-      # submit all branches
-      for branch in $(branches_matching refs/heads/); do
-        submit_branch $branch $remote
-      done
-
-    # If local_branches is set
-    elif [ -n "$local_branches" ]; then
-      # submit all branches that only exist locally
-      for branch in $(local_only_branches); do
-        submit_branch $branch $remote
-      done
-
-    # else if branches were provided or you were on one
-    elif [ -n "$branches" ]; then
-      # submit those branches
-      for branch in $branches; do
-        submit_branch $branch $remote
-      done
-    fi
-
-    # else nothing happens.
-
-    checkout "$initial_branch"
-    exit 0
-
-  else
-    echo "Remote $remote not found."
-    echo 'Please add it to continue.'
-    exit 1
-  fi
-
 }
 
 parse_opts() {
-  while getopts ":ALr:q" option
+  while getopts ":LAr:q" option
   do
     case "$option" in
-      A)
-        all_branches=true
-        ;;
       L)
-        local_branches=true
+        branches=$(local_only_branches)
+        ;;
+      A)
+        branches=$(branches_matching refs/heads/)
         ;;
       r)
         remote="$OPTARG"
@@ -120,4 +89,7 @@ parse_opts() {
         ;;
     esac
   done
+  if [[ -z "$remote" ]]; then
+    remote='origin'
+  fi
 }

@@ -1,18 +1,18 @@
 #!/bin/sh
 
+####
+# Text helpers
+##
+
 output() {
   if [[ -z "$QUIET" ]]; then
     echo $1
   fi
 }
 
-# This shit is why Aspect oriented programming exists.
-execute() {
-  if [[ -z "$QUIET" ]]; then
-    eval "$1"
-  else
-    eval "$1 -q"
-  fi
+fail() {
+  echo "$@" >&2
+  exit 1
 }
 
 line_count() {
@@ -23,21 +23,76 @@ line_count() {
   fi
 }
 
-branch_exists() {
-  echo $(git show-ref refs/heads/$1)
+git_dir_name() {
+  # Git repo URI => project directory
+  echo $1 | grep -Eo '\/.+?(\/)?(.\git)?$' | grep -Eo '[^\/].+[^\/][^\.git]'
 }
 
-branches_matching() {
-  echo $(git for-each-ref --format='%(refname:short)' $1)
+####
+# Git helpers
+##
+
+# This shit is why Aspect oriented programming exists.
+execute() {
+  if [[ -z "$QUIET" ]]; then
+    eval "$1"
+  else
+    eval "$1 -q"
+  fi
 }
 
 current_branch() {
   echo $(git rev-parse --abbrev-ref HEAD)
 }
 
+checkout() {
+  # Only checkout if neccesary. Saves some time.
+  if [[ $1 != $(current_branch) ]]; then
+    execute "git checkout $1"
+  fi
+}
+
 commit_count() {
   line_count "$(git rev-list $1..$2)"
 }
+
+ref_exists() {
+  echo $(git show-ref refs/heads/$1)
+}
+
+assert_ref_exists() {
+  test -n $(ref_exists $1) || fail <<-'MSG'
+    fatal: git-fork can't find '$1'.
+    fatal: Could not read from remote repository.
+
+    Please make sure you have the correct access rights
+    and the repository exists.
+MSG
+}
+
+branches_matching() {
+  echo $(git for-each-ref --format='%(refname:short)' $1)
+}
+
+local_only_branches() {
+  local branches=""
+  # List local branches by name
+  local local_branches=$(branches_matching refs/heads/)
+  # List source branches by source/name
+  local source_branches=$(branches_matching refs/remotes/source/)
+  for local in $local_branches; do
+    # If branch is not found in source
+    if [[ -z $(echo $source_branches | grep -Eo "\bsource\/$local\b") ]]; then
+      # add to local only list
+      branches="$local $branches"
+    fi
+  done
+  echo $branches
+}
+
+####
+# Presenters
+##
 
 present_behind() {
   local diff=$(commit_count $1 $2)
@@ -57,98 +112,70 @@ present_ahead() {
   fi
 }
 
-checkout() {
-  # Only checkout if neccesary. Saves some time.
-  if [[ $1 != $(current_branch) ]]; then
-    execute "git checkout $1"
-  fi
-}
-
-get_git_dir_name() {
-  # Ask me not what this incantation means,
-  # For I learned it from a wizard
-  # Who heard it from a witch
-  # Who spent 40 minutes dicking around in her terminal
-  # Unitl it worked.
-  # All I knowst
-  # Is that it strippith the repo name
-  # From an http://github.com/user/repo_name/
-  # Or a git@github.com/user/repo_name.git URI
-  # Sans prejudice.
-  echo $1 | grep -Eo '\/.+?(\/)?(.\git)?$' | grep -Eo '[^\/].+[^\/][^\.git]'
-}
-
-local_only_branches() {
-  local branches=""
-  # List local branches by name
-  local local_branches=$(branches_matching refs/heads/)
-  # List source branches by source/name
-  local source_branches=$(branches_matching refs/remotes/source/)
-  for local in $local_branches; do
-    # If branch is not found in source
-    if [[ -z $(echo $source_branches | grep -Eo "\bsource\/$local\b") ]]; then
-      # add to local only list
-      branches="$local $branches"
-    fi
-  done
-  echo $branches
-}
+####
+# Heavy lifting
+##
 
 branch_status() {
+  local branch=$1
+  local remote=$2
   # Skip master
-  if [[ "$1" != 'master' ]]; then
+  if [[ "$branch" != 'master' ]]; then
     # Ensure branch exists
-    if [[ -n $(branch_exists $1) ]]; then
-      local behind_master=$(present_behind $1 master)
-      local behind_source=$(present_behind $1 source/master)
+    if [[ -n $(ref_exists $branch) ]]; then
+      local behind_master=$(present_behind $branch master)
+      local behind_source=$(present_behind $branch source/master)
       local ahead_remote=''
       # Try remote
-      if [[ -n "$2" ]] && [[ -n $(branches_matching "refs/remotes/$2/$1") ]]; then
-        ahead_remote=$(present_ahead $2/$1 $1)
+      if [[ -n "$remote" ]] && [[ -n $(branches_matching "refs/remotes/$remote/$branch") ]]; then
+        ahead_remote=$(present_ahead $remote/$branch $branch)
       else
         ahead_remote="submission status unkown"
       fi
-      output "$1: $behind_master, $behind_source, $ahead_remote."
+      output "$branch: $behind_master, $behind_source, $ahead_remote."
     else
-      output "Branch $1 not found. Skipping."
+      output "Branch $branch not found. Skipping."
     fi
   fi
 }
 
 rebase_branch() {
+  local branch=$1
   # Skip master
-  if [ $1 != 'master' ]; then
+  if [ $branch != 'master' ]; then
     # Ensure branch exists
-    if [[ -n $(branch_exists $1) ]]; then
+    if [[ -n $(ref_exists $branch) ]]; then
       # If branch needs rebase
-      if [[ $(commit_count $1 master) != '0' ]]; then
-        output "Updating branch $1..."
-        checkout "$1 -q"
+      if [[ $(commit_count $branch master) != '0' ]]; then
+        output "Updating branch $branch..."
+        checkout "$branch -q"
         execute "git rebase master"
       else
-        output "Branch $1 is already up to date."
+        output "Branch $branch is already up to date."
       fi
     else
-      output "Branch $1 not found. Skipping."
+      output "Branch $branch not found. Skipping."
     fi
   fi
 }
 
 submit_branch() {
+  local branch=$1
+  local remote=$2
   # Skip master
-  if [ $1 != 'master' ]; then
+  if [ $branch != 'master' ]; then
     # Ensure branch exists
-    if [[ -n $(branch_exists $1) ]]; then
-      execute "git fork update $1"
+    if [[ -n $(ref_exists $branch) ]]; then
+      execute "git fork update $branch"
       # If branch needs to be submitted
-      if [[ $(commit_count $2/$1 $1) != '0' ]]; then
-        checkout "$1"
-        execute "git push $2 $1"
+      if [[ $(commit_count $remote/$branch $branch) != '0' ]]; then
+        checkout "$branch"
+        execute "git push $remote $branch"
       else
-        output "Branch $1 is already submitted."
+        output "Branch $branch is already submitted."
       fi
     else
-      output "Branch $1 not found. Skipping."
+      output "Branch $branch not found. Skipping."
     fi
   fi
 }
