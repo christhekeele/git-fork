@@ -1,34 +1,25 @@
 git-fork
 ========
 
-A git extension that streamlines developing contributions to open source software.
+A git extension for keeping forks in sync with their original repositories.
 
 The Problem
 -----------
 
-The process for contributing to open source git repositories is well established:
+'Forking' a git repository is a common git workflow.
 
-1.  Clone an open source project at a destination
-2.  Set the source code as a special remote
-3.  Set up a remote you own to host your contributions
-4.  Ensure your master is up to date with source if this is an old fork
-5.  Branch off of master to develop a contribution
-6.  As time passes, periodically updating master from source
-7.  Rebase your contribution branch off of master
-8.  Handle merge conflicts during rebase
-9.  Ensure master is up to date with source when contribution is ready
-10. Rebase your contribution branch off of master one final time
-11. Push contribution branches to your public remote for approval
-12. Repeat until your contribution meets approval and gets merged in
+A 'fork' is simply a cloned copy of another repository. We generally create a fork when we want to contribute to a repository we don't have the ability to commit to, so want to stage our changes somewhere public; or when we want to maintain a copy of a codebase with our own custom changes.
 
-None of this is exactly hard... but it's a lot of extra typing for a very standard workflow. It's practically begging to be abstracted. In fact, only step 8 can't done via script. We have more productive things to be typing than [a bunch of boilerplate commands](PROBLEM.md) every time we're concerned we're getting behind.
+The problem is that `git` is ignorant of this common practice. Forking is a higher-level concern in environments where repositories are publicly hosted with an authoritative source. In particular, we frequently want to keep our forks as up-to-date as possible with their original source. Either we want our fork to be in sync with the source as we develop and submit contributions, or we want to harvest the latest improvement to our project's seed while keeping our modifications.
 
-`git-fork` provides several commands that save you most of this typing and promotes good contribution patterns. It plays well with GitHub forks, but is in no way restricted to any particular host—it's purely a local workflow tool.
+While this quite possible with standard `git`, it's a fairly verbose process to accommodate something I do several times a day. We have more productive things to be typing than [a bunch of boilerplate commands](PROBLEM.md) every time we're concerned we're getting behind.
+
+`git-fork` provides several commands that save you most of this typing and promotes good contribution patterns. It plays well with remote repository hosting sites and their native implementations of forks, but it is in no way restricted to any particular host. It's purely a tool that augments your local `git`'s vocabulary with abstractions around this common workflow.
 
 Installation
 ------------
 
-Installation is done through git, although I'd like to put `git-fork` on a homebrew tap eventually.
+Installation is done through git.
 
 ``` bash
 $ git clone git@github.com:christhekeele/git-fork.git
@@ -87,14 +78,11 @@ $ git fork submit
 
 Much better.
 
-Dependencies
-------------
-
-`git-fork` does not currently work on Windows, although this may change in the future. Aside from the obvious `git` dependency, it uses `cd`, `grep`, and `sed` and several others under the hood. I have no idea what goes into making cross-OS-compatible shell scripts, so here we are.
+Options and detailed usage instructions can be found running `git fork help`.
 
 Contributing
 ------------
 
-You know the drill: clone `git-fork`, and then... use it. That's the problem it's trying to solve, after all.
+You know the drill: clone `git-fork`, and then... use it. This is the process it's trying to simplify, after all.
 
-If it's sufficiently broken that you can't use it to fix itself, please open an [issue](https://www.github.com/christhekeele/git-fork/issues)!
+If `git-fork` is sufficiently broken that you can't use it to fix itself, please open an [issue](https://www.github.com/christhekeele/git-fork/issues) and fall back to standard git commands!

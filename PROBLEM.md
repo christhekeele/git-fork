@@ -1,17 +1,25 @@
 The Forking Problem
 ===================
 
-This is a comparison of a normal git fork workflow to `git-fork`'s workflow, to illustrate the verbosity of normal fork management. It uses the example from the [README](README.md#usage).
+The process for contributing to open source git repositories is well established:
 
-Some talking points:
-
-- One might say we're being a little paranoid with our updates in this trivial scenario, but it's reasonable to assume you'd be wanting to update more than once for any sustained development. `git-fork` is paranoid for you, and makes sustained development a breeze.
-- `git-fork` supports updating and submitting multiple contribution branches in one pass. The equivalent to that in normal git workflow is omitted for the sake of brevity.
-- If you have a fork with multiple contributions in progress, `git fork status -L`
-can easily traverse them all and advise you of thier states.
+1.  Clone an open source project at a destination
+2.  Set the source code as a special remote
+3.  Set up a remote you own to host your contributions
+4.  Ensure your master is up to date with source if this is an old fork
+5.  Branch off of master to develop a contribution
+6.  As time passes, periodically updating master from source
+7.  Rebase your contribution branch off of master
+8.  Handle merge conflicts during rebase
+9.  Ensure master is up to date with source when contribution is ready
+10. Rebase your contribution branch off of master one final time
+11. Push contribution branches to your public remote for approval
+12. Repeat until your contribution meets approval and gets merged in
 
 Normal Git Workflow
 -------------------
+
+Let's see how this locally with git:
 
 ```bash
 # Getting the project
@@ -51,8 +59,12 @@ git rebase master
 git push origin rewrite-string-docs
 ```
 
+This is a lot of boilerplate typing...
+
 git-fork Workflow
 -----------------
+
+Let's abstract all that away:
 
 ```bash
 # Getting the project

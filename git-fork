@@ -19,9 +19,7 @@ usage() {
   cat <<USAGE
 usage: git fork <subcommand>
 
-Git fork abstracts away the process of making OSS contributions.
-It integrates with GitHub's fork system, but is host-agnostic in
-its implementation.
+A git extension for keeping forks in sync with their original repositories.
 
 Available subcommands are:
   help      Displays in-depth help
