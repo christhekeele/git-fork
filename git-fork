@@ -6,7 +6,7 @@ if [ "$DEBUG" = "yes" ]; then
 fi
 set -e
 
-export GITFORK_VERSION="0.3.1"
+export GITFORK_VERSION="0.3.2"
 
 # The sed expression here replaces all backslashes by forward slashes.
 # This helps our Windows users, while not bothering our Unix users.
