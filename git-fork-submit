@@ -62,7 +62,7 @@ parse_args() {
     branches="$branches $1"; shift
   done
 
-  # If no branches supplied and current is not master, rebase current.
+  # If no branches supplied and current is not master, submit current.
   if [[ -z "$branches" ]] && [[ $initial_branch != 'master' ]]; then
     branches="$initial_branch"
   fi
